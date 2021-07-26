@@ -1,0 +1,5 @@
+__pycache__
+virtualenv
+self_signed_certs
+app_data
+TODO.txt

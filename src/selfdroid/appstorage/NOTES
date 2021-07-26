@@ -1,0 +1,30 @@
+--- Programmer's notes regarding the app storage ---
+
+
+
+It would be possible to store only the uploaded APK files, but this approach would be terribly inefficient,
+as everytime an app's metadata or icon would be queried by the client, the whole APK would have to be disassembled.
+To address this issue, this program uses 3 places where the uploaded apps' properties are stored:
+ 1. Database (contains apps' metadata)
+ 2. APKs directory (contains the APKs themselves)
+ 3. Icons directory (contains the apps' icons)
+
+
+
+Although this approach is good for performance, it makes the program's architecture much more complicated.
+The division of the app storage to 3 parts means that any CRUD operation needs to be also divided into 3 parts.
+This brings several problems:
+
+ - ATOMICITY:
+   An usual Flask app runs in multiple processes and threads, serving clients' requests. This obviously means that
+   when the app storage is modified, the WHOLE operation must be atomic. Of course, this would not be such complicated
+   if the program used only one storage place or at least ran in one process. To tackle this problem, when any CRUD
+   operation is performed, the program uses the FlockBasedLock library (https://github.com/vitlabuda/flockbasedlock),
+   which was programmed by this program's author, that uses file-bound locks to ensure atomicity.
+
+
+ - ERROR HANDLING & STORAGE CONSISTENCY:
+   When adding, updating or deleting an app, an error can occur when operating with any of the 3 aforementioned
+   app storage places. This means, for example, when an app's metadata are already saved in the database, but saving
+   the APK file to the APKs directory fails, it causes inconsistency between the 3 app storage places. This problem is
+   solved using the AppStorageConsistencyEnsurer class which deletes any apps that are saved inconsistently.

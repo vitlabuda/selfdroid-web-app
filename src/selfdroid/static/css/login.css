@@ -1,0 +1,7 @@
+#password-field-wrapper {
+    display: block;
+}
+
+#passwordless-login-note {
+    display: none;
+}

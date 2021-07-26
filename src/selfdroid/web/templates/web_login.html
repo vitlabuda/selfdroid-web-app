@@ -1,0 +1,116 @@
+{% extends '_web_base.html' %}
+
+
+{#
+SPDX-License-Identifier: BSD-3-Clause
+
+Copyright (c) 2021 Vít Labuda. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+    disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+    following disclaimer in the documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote
+    products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#}
+
+
+{% block block_additional_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" type="text/css" nonce="{{ csp_nonce() }}">
+{% endblock %}
+
+{% block block_title %}
+<title>Login | {{ Settings.INSTANCE_NAME }}</title>
+{% endblock %}
+
+{% block block_jumbotron %}
+<div class="container-fluid bg-light text-center p-3">
+    <h1 class="display-5 fw-bold py-5">{{ Settings.INSTANCE_NAME }}</h1>
+</div>
+{% endblock %}
+
+{% block block_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 ms-auto my-3">
+            <h3 class="text-center">Log in</h3>
+
+            <br>
+
+            <form action="{{ url_for('web_blueprint.fl_web_login') }}" method="POST">
+                {{ login_form.hidden_tag() }}
+
+                <div class="text-center">
+                    <div class="mb-1">{{ login_form.log_in_as.label.text }}</div>
+                    <div class="btn-group" role="group">
+                        {% for radio_field in login_form.log_in_as %}
+                            {{ radio_field(class_='selfdroid-log-in-as-radio-field btn-check') }}
+                            {{ radio_field.label(class_='btn btn-outline-dark') }}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="form-group" id="password-field-wrapper">
+                    {{ login_form.password.label(class_='form-label') }}
+                    {{ login_form.password(class_='form-control') }}
+                </div>
+
+                <div id="passwordless-login-note">
+                    <b>Note:</b> On this server, password is not required to log in with user privileges.
+                    <br>
+                    Click the <i>Log in</i> button and you will be let in automatically.
+                </div>
+
+                <br>
+
+                <div class="form-group">
+                    {{ login_form.submit(class_='btn btn-primary') }}
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4 me-auto my-3 text-center">
+            <h3>Mobile app</h3>
+
+            <br>
+
+            <div>
+                <p>
+                    To pair the Selfdroid mobile app with this server, you can scan this QR code in the app:
+                </p>
+
+                <div class="d-inline-block" id="api-url-qrcode"></div>
+            </div>
+
+            <br>
+
+            <p>
+                Alternatively, you can enter the following URL to the app manually: <b id="api-url-text"></b>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block block_additional_js %}
+<script nonce="{{ csp_nonce() }}">
+    const IS_USER_LOGIN_PASSWORDLESS = {{ "true" if is_user_login_passwordless else "false" }};
+
+    const API_HOST = window.location.host;
+    const API_PATH = "{{ url_for('api_blueprint.fl_api_base') }}";
+</script>
+<script src="{{ url_for('static', filename='libs/qrcode/qrcode.js') }}" nonce="{{ csp_nonce() }}"></script>
+<script src="{{ url_for('static', filename='js/login.js') }}" nonce="{{ csp_nonce() }}"></script>
+{% endblock %}

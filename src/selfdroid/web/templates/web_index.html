@@ -1,0 +1,133 @@
+{% extends '_web_base.html' %}
+
+
+{#
+SPDX-License-Identifier: BSD-3-Clause
+
+Copyright (c) 2021 Vít Labuda. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+    disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+    following disclaimer in the documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote
+    products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#}
+
+
+{% block block_title %}
+<title>All apps | {{ Settings.INSTANCE_NAME }}</title>
+{% endblock %}
+
+{% block block_modals %}
+{{ super() }}
+    {% if add_app_form %}
+        <div class="modal fade" tabindex="-1" id="addAppModal" aria-labelledby="addAppModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ url_for('web_blueprint.fl_web_add_app') }}" method="POST" enctype="multipart/form-data">
+                        {{ add_app_form.hidden_tag() }}
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addAppModalLabel">Add a new app</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                The app metadata (icon, app name, version, etc.) will be automatically extracted from the supplied APK file.
+                            </p>
+
+                            {{ add_app_form.apk_file.label(class_='form-label') }}
+                            {{ add_app_form.apk_file(class_='form-control') }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            {{ add_app_form.submit(class_='btn btn-success') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block block_content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col-md-6 my-1">
+            <h2>All apps</h2>
+        </div>
+
+        {% if add_app_form %}
+        <div class="col-md-6 my-1 text-end">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAppModal">
+                <span class="bi bi-plus-square"></span>
+                <span class="ms-1">Add a new app</span>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-12 my-1">
+            {% if all_apps_metadata %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle fs-5">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Icon</th>
+                                <th>App name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app_metadata in all_apps_metadata %}
+                                <tr>
+                                    <td class="selfdroid-shrink">
+                                        {{ loop.index }}.
+                                    </td>
+
+                                    <td class="selfdroid-shrink">
+                                        <img class="selfdroid-icon-small" src="{{ url_for('web_blueprint.fl_web_app_icon', app_id=app_metadata.id) }}" alt="{{ app_metadata.app_name }}">
+                                    </td>
+
+                                    <td>
+                                        {{ app_metadata.app_name }}
+                                    </td>
+
+                                    <td class="selfdroid-shrink">
+                                        <a class="btn btn-primary" href="{{ url_for('web_blueprint.fl_web_app_details', app_id=app_metadata.id) }}" role="button">
+                                            <span class="bi bi-info-square-fill"></span>
+                                            <span class="d-none d-md-inline-block ms-1">Details</span>
+                                        </a>
+
+                                        <a class="btn btn-dark" href="{{ url_for('web_blueprint.fl_web_download_apk', app_id=app_metadata.id) }}" role="button">
+                                            <span class="bi bi-download"></span>
+                                            <span class="d-none d-md-inline-block ms-1">Download</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="my-4 text-center">
+                    <i>No apps have been added!</i>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

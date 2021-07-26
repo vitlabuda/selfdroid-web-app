@@ -1,0 +1,20 @@
+# Remember to adjust the values so they match your server's environment!
+# -> WorkingDirectory, User, Group, ExecStart
+
+[Unit]
+Description=Selfdroid uWSGI
+After=network.target nginx.service
+
+[Service]
+Type=simple
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+WorkingDirectory=/srv/selfdroid
+User=selfdroid
+Group=selfdroid
+ExecStart=/bin/bash /srv/selfdroid/run_uwsgi.sh
+ExecStop=/bin/kill -INT $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,202 @@
+{% extends '_web_base.html' %}
+
+
+{#
+SPDX-License-Identifier: BSD-3-Clause
+
+Copyright (c) 2021 Vít Labuda. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+    disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+    following disclaimer in the documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote
+    products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#}
+
+
+{% block block_title %}
+<title>{{ app_metadata.app_name }} | {{ Settings.INSTANCE_NAME }}</title>
+{% endblock %}
+
+{% block block_modals %}
+{{ super() }}
+    {% if update_app_form %}
+        <div class="modal fade" tabindex="-1" id="updateAppModal" aria-labelledby="updateAppModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ url_for('web_blueprint.fl_web_update_app', app_id=app_metadata.id) }}" method="POST" enctype="multipart/form-data">
+                        {{ update_app_form.hidden_tag() }}
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateAppModalLabel">Update this app</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                You are updating <b>{{ app_metadata.app_name }}</b>.
+                            </p>
+
+                            {{ update_app_form.apk_file.label(class_='form-label') }}
+                            {{ update_app_form.apk_file(class_='form-control') }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            {{ update_app_form.submit(class_='btn btn-warning') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if delete_app_form %}
+        <div class="modal fade" tabindex="-1" id="deleteAppModal" aria-labelledby="deleteAppModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ url_for('web_blueprint.fl_web_delete_app', app_id=app_metadata.id) }}" method="POST">
+                        {{ delete_app_form.hidden_tag() }}
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteAppModalLabel">Delete this app</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete <b>{{ app_metadata.app_name }}</b>?
+                            <br>
+                            The deletion is irreversible!
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            {{ delete_app_form.submit(class_='btn btn-danger') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block block_content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col-md-6 my-1">
+            <!-- The table makes it easy to vertically align the icon and app name. -->
+            <table class="align-middle">
+                <tbody>
+                    <tr>
+                        <td class="pe-1">
+                            <a href="{{ url_for('web_blueprint.fl_web_app_icon', app_id=app_metadata.id) }}" target="_blank">
+                                <img class="selfdroid-icon-big" src="{{ url_for('web_blueprint.fl_web_app_icon', app_id=app_metadata.id) }}" alt="{{ app_metadata.app_name }}">
+                            </a>
+                        </td>
+
+                        <td class="ps-1">
+                            <h2 class="my-0">{{ app_metadata.app_name }}</h2>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6 my-1 text-end">
+            <a class="btn btn-primary" href="{{ url_for('web_blueprint.fl_web_index') }}" role="button">
+                <span class="bi bi-arrow-left-square me-1"></span>
+                Go back to the app list
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 my-3">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <tbody>
+                        <tr>
+                            <th class="selfdroid-shrink-md text-end" scope="row">App name:</th>
+                            <td colspan="3">{{ app_metadata.app_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th class="selfdroid-shrink-md text-end" scope="row">Package name:</th>
+                            <td colspan="3">{{ app_metadata.package_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th class="selfdroid-shrink-md text-end" scope="row">Version:</th>
+                            <td colspan="3">
+                                <span title="Version name">{{ app_metadata.version_name }}</span>
+                                <i title="Version code">({{ app_metadata.version_code }})</i>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="selfdroid-shrink-md text-end" scope="row">Min. Android version:</th>
+                            <td>{{ app_metadata.min_api_level|tf_android_api_level_to_version_string }}</td>
+                            <th class="selfdroid-shrink-md text-end" scope="row">Max. Android version:</th>
+                            <td>
+                                {% if app_metadata.max_api_level is none %}
+                                    <i title="Most apps don't specify their maximum Android version, as it unnecessarily breaks forward compatibility">(not specified)</i>
+                                {% else %}
+                                    {{ app_metadata.max_api_level|tf_android_api_level_to_version_string }}
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="selfdroid-shrink-md text-end" scope="row">Added:</th>
+                            <td>{{ app_metadata.added_datetime_timezoned|tf_format_datetime }}</td>
+                            <th class="selfdroid-shrink-md text-end" scope="row">Last updated:</th>
+                            <td>{{ app_metadata.last_updated_datetime_timezoned|tf_format_datetime }}</td>
+                        </tr>
+
+                        <tr>
+                            <th class="selfdroid-shrink-md text-end" scope="row">APK file size:</th>
+                            <td colspan="3">
+                                <span title="{{ app_metadata.apk_file_size }} bytes">{{ app_metadata.apk_file_size|tf_human_readable_file_size }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-4 mx-auto my-1">
+            <a class="btn btn-dark w-100" href="{{ url_for('web_blueprint.fl_web_download_apk', app_id=app_metadata.id) }}" role="button">
+                <span class="bi bi-download"></span>
+                <span class="ms-1">Download</span>
+            </a>
+        </div>
+
+        {% if update_app_form %}
+        <div class="col-md-4 mx-auto my-1">
+            <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#updateAppModal">
+                <span class="bi bi-arrow-clockwise"></span>
+                <span class="ms-1">Update</span>
+            </button>
+        </div>
+        {% endif %}
+
+        {% if delete_app_form %}
+        <div class="col-md-4 mx-auto my-1">
+            <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteAppModal">
+                <span class="bi bi-trash"></span>
+                <span class="ms-1">Delete</span>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

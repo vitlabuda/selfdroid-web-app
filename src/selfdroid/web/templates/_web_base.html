@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+    <head>
+        <!--
+        SPDX-License-Identifier: BSD-3-Clause
+
+        Copyright (c) 2021 Vít Labuda. All rights reserved.
+
+        Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+        following conditions are met:
+         1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+            disclaimer.
+         2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+            following disclaimer in the documentation and/or other materials provided with the distribution.
+         3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote
+            products derived from this software without specific prior written permission.
+
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+        DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+        SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+        SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+        WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        -->
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="googlebot" content="nosnippet,noarchive">
+        <meta name="robots" content="noindex,nofollow">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/bootstrap.min.css') }}" type="text/css" nonce="{{ csp_nonce() }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/bootstrap-icons.css') }}" type="text/css" nonce="{{ csp_nonce() }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/selfdroid.css') }}" type="text/css" nonce="{{ csp_nonce() }}">
+        {% block block_additional_css %}
+        {% endblock %}
+
+        <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+
+        {% block block_title %}
+        <title>{{ Settings.INSTANCE_NAME }}</title>
+        {% endblock %}
+    </head>
+    <body class="d-flex flex-column h-100">
+        {% block block_modals %}
+        <div class="modal fade" tabindex="-1" id="licensingModal" aria-labelledby="licensingModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="licensingModalLabel">Authors &amp; licensing</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Selfdroid has been written by <b>Vít Labuda</b> (<a href="https://vitlabuda.cz/" target="_blank" rel="noopener noreferrer">website</a>, <a href="https://github.com/vitlabuda/" target="_blank" rel="noopener noreferrer">GitHub</a>).
+                        </p>
+
+                        <hr>
+
+                        <p>
+                            This project is licensed under the <b>3-clause BSD license</b>. See the <a href="{{ url_for('static', filename='licenses/LICENSE.txt') }}" target="_blank">LICENSE</a> file for details.
+                        </p>
+
+                        <p>
+                            Some third-party open-source components are used within this project.
+                            See the <a href="{{ url_for('static', filename='licenses/BACKEND-THIRD-PARTY-LICENSES.txt') }}" target="_blank">BACKEND-THIRD-PARTY-LICENSES</a> and <a href="{{ url_for('static', filename='licenses/FRONTEND-THIRD-PARTY-LICENSES.txt') }}" target="_blank">FRONTEND-THIRD-PARTY-LICENSES</a> files for details.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+
+        <header>
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{{ url_for('web_blueprint.fl_web_index') }}">{{ Settings.INSTANCE_NAME }}</a>
+
+                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#webNavbar" aria-controls="webNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="webNavbar">
+                        <ul class="navbar-nav ms-auto">
+                            {% if logout_form %}
+                                <li class="nav-item">
+                                    <form action="{{ url_for('web_blueprint.fl_web_logout') }}" method="POST">
+                                        {{ logout_form.hidden_tag() }}
+
+                                        {{ logout_form.submit(class_='btn btn-light') }}
+                                    </form>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-shrink-0">
+            {% block block_jumbotron %}
+            {% endblock %}
+
+            {% include '_web_messages_displayer.html' %}
+
+            {% block block_content %}
+            {% endblock %}
+
+            <br>
+            <br>
+            <br>
+        </main>
+
+        <footer class="footer text-center bg-dark text-white mt-auto px-3 py-1">
+            <small>
+                <b>Selfdroid v{{ Constants.SELFDROID_WEB_APP_VERSION }}</b>
+
+                <span class="bi bi-dot"></span>
+
+                <span class="selfdroid-cursor-pointer text-decoration-underline" data-bs-toggle="modal" data-bs-target="#licensingModal">Authors &amp; licensing</span>
+
+                <span class="bi bi-dot"></span>
+
+                <i>Privilege level: {{ "Administrator" if has_admin_privileges else ("User" if has_at_least_user_privileges else "None") }}</i>
+            </small>
+        </footer>
+
+        <script src="{{ url_for('static', filename='libs/bootstrap/bootstrap.bundle.min.js') }}" nonce="{{ csp_nonce() }}"></script>
+        {% block block_additional_js %}
+        {% endblock %}
+    </body>
+</html>
