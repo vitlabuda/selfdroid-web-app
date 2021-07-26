@@ -25,9 +25,9 @@ It's intended primarily for those who want to conveniently distribute their own 
 
 ## Screenshots
 <p float="left">
-    <img src="screenshot_1.png" alt="Screenshot 1" width="500">
-    <img src="screenshot_2.png" alt="Screenshot 2" width="500">
-    <img src="screenshot_3.png" alt="Screenshot 3" width="500">
+    <img src="screenshot_1.png" alt="Screenshot 1" width="800">
+    <img src="screenshot_2.png" alt="Screenshot 2" width="800">
+    <img src="screenshot_3.png" alt="Screenshot 3" width="800">
 </p>
 
 
