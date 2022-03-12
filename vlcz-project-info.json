@@ -1,0 +1,10 @@
+{
+  "ignore": false,
+  "display_name": "Selfdroid (web app)",
+  "description": null,
+  "programming_language": "Python",
+  "priority": 1000,
+  "category_id": "web-apps",
+  "category_display_name": "Web apps",
+  "category_priority": 1200
+}
