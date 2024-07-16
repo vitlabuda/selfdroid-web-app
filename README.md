@@ -1,9 +1,10 @@
 # Selfdroid Web App
-**Selfdroid** is an open-source **self-hosted Android app store** written in Python 3 using the Flask framework.
+**Selfdroid** is an open-source **self-hosted Android app store** written in Python 3 using the Flask framework. This 
+web app allows one to upload Android apps (in the form of APK files) to their own server, from where they can then be
+downloaded.
 
-This web app allows one to upload Android apps (in the form of APK files) to their own server and then deploy them to Android devices using the [Selfdroid Android app](#android-app).
-
-It's intended primarily for those who want to conveniently distribute their own apps only to a relatively small amount of devices (e.g. within a company or a household) and therefore don't want to pay for a Google Play Developer account.
+It is intended primarily for those who want to distribute their own apps only to a relatively small amount of devices 
+(e.g. within a company or a household) and therefore do not want to pay for a Google Play Developer account.
 
 
 
@@ -15,11 +16,6 @@ It's intended primarily for those who want to conveniently distribute their own 
 - responsive web interface
 - backward- and forward-compatible JSON API
 - [atomic and consistent backend app storage](src/selfdroid/appstorage/NOTES)
-
-
-
-## Android app
-**The Android app, which will offer the abilities to conveniently install and update uploaded apps, is currently work-in-progress!** 
 
 
 
@@ -74,6 +70,14 @@ It's intended primarily for those who want to conveniently distribute their own 
    - [run_uwsgi.sh](src/run_uwsgi.sh) – uWSGI startup helper script
    - [selfdroid_uwsgi.service](selfdroid_uwsgi.service) – uWSGI systemd service (to run the web app on startup)
    - [selfdroid_nginx_vhost.conf](selfdroid_nginx_vhost.conf) – virtual host configuration file for the nginx web server
+
+
+
+## Android app
+As has been mentioned above, the web app has a JSON API, which was intended to be used by a **Selfdroid Android app**,
+which would make deploying and updating the uploaded apps more convenient. However, due to the fact that my focus has, 
+for several reasons, shifted onto other projects since this web app has been published, there are currently no plans 
+to create the Android app. *Contributions are welcome, though.*
 
 
 
