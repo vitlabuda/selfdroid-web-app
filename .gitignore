@@ -1,3 +1,4 @@
+.idea
 __pycache__
 virtualenv
 self_signed_certs
